@@ -11,3 +11,5 @@ Após atualizar a connection string, executar o seguinte comando no console do g
 <pre>
     Update-Database
 </pre>
+
+Agora é só executar no Visual Studio
