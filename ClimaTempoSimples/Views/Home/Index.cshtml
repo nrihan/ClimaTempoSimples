@@ -1,0 +1,85 @@
+﻿@model List<ClimaTempoSimples.Models.PrevisaoClima>
+@{
+    ViewBag.Title = "Clima Tempo Simples";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="jumbotron">
+            <h2>Cidades mais quentes hoje</h2>
+            @foreach (var item in ViewBag.CidadesQuentes)
+            {
+                <div class="row">
+                    <div class="col-md-6">@item.Cidade.Nome</div>
+                    <div class="col-md-3"><b>Min</b> @item.TemperaturaMinima</div>
+                    <div class="col-md-3"><b>Max</b> @item.TemperaturaMaxima</div>
+                </div>
+            }
+        </div>
+    </div>
+
+
+    <div class="col-md-6">
+        <div class="jumbotron">
+            <h2>Cidades mais frias hoje</h2>
+            @foreach (var item in ViewBag.CidadesFrias)
+            {
+                <div class="row">
+                    <div class="col-md-6">@item.Cidade.Nome</div>
+                    <div class="col-md-3"><b>Min</b> @item.TemperaturaMinima</div>
+                    <div class="col-md-3"><b>Max</b> @item.TemperaturaMaxima</div>
+                </div>
+            }
+        </div>
+    </div>
+
+
+</div>
+
+
+<div class="row">
+    <label>Cidades</label>
+    @Html.DropDownList("Cidade", ViewBag.Cidades as SelectList, "Selecione uma Cidade", new { @class = "select form-control" })
+</div>
+
+<div id="divClimaTempo" class="row">
+    
+    
+   
+</div>
+
+
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+
+@section scripts{
+    <script>
+        $('select').on("change", function () {
+            console.log(this.value)
+            $.ajax({
+                url: '@Url.Action("ObterPrevisaoDoTempo")' + '?cidadeID=' + this.value,
+                type: "GET",
+                success: function (result) {
+                    var table = "";
+                    console.log(result.data)
+                    if (result.data == null) table = '<b>Não foi possível encontrar a previsão do tempo<b>';
+
+                    result.data.forEach(function (i) {
+                        var data = new Date(parseInt(i.DataPrevisao.substr(6))).toString();
+                        table += '<div class="col-md-1">' +
+                            '<div class="row">' + data.substr(0, 10) + '</div> ' +
+                            '<div class="row">' + i.Clima + '</div> ' +
+                            '<div class="row">' + i.TemperaturaMaxima + '</div>' +
+                            '<div class="row">' + i.TemperaturaMinima + '</div></div>';
+                    })                    
+
+                    $('#divClimaTempo').html(table);
+                }
+            });
+        });
+
+        
+    </script>
+
+}
